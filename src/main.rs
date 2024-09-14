@@ -40,6 +40,20 @@ enum Commands {
         /// The second number
         b: f64,
     },
+    /// Percentage two numbers
+    Percentage {
+        /// The first number
+        a: f64,
+        /// The second number
+        b: f64,
+    },
+    /// Percentage Change between two numbers
+    PercentageChange {
+        /// The first number
+        a: f64,
+        /// The second number
+        b: f64,
+    },
 }
 
 fn main() {
@@ -60,6 +74,20 @@ fn main() {
                 println!("Error: Division by zero is not allowed.");
             } else {
                 println!("{}", a / b);
+            }
+        }
+        Commands::Percentage { a, b } => {
+            if a + b == 0.0 {
+                println!("Error: Division by zero is not allowed.");
+            } else {
+                println!("{}", ((a / (a + b)) * 100.0));
+            }
+        }
+        Commands::PercentageChange { a, b } => {
+            if a == 0.0 {
+                println!("Error: Division by zero is not allowed.");
+            } else {
+                println!("{}", (((b - a) / a) * 100.0));
             }
         }
     }
@@ -122,6 +150,50 @@ mod tests {
                 assert!(b == 0.0);
             }
             _ => panic!("Expected divide command"),
+        }
+    }
+
+    #[test]
+    fn test_percentage() {
+        let cli = Cli::try_parse_from(["calculator", "percentage", "2.0", "6.0"]).unwrap();
+        match cli.command {
+            Commands::Percentage { a, b } => {
+                assert_eq!((a / (a + b)) * 100.0, 25.0);
+            }
+            _ => panic!("Expected percentage command"),
+        }
+    }
+
+    #[test]
+    fn test_percentage_with_divide_by_zero() {
+        let cli = Cli::try_parse_from(["calculator", "percentage", "0.0", "0.0"]).unwrap();
+        match cli.command {
+            Commands::Percentage { a, b } => {
+                assert!(a + b == 0.0);
+            }
+            _ => panic!("Expected percentage command"),
+        }
+    }
+    
+    #[test]
+    fn test_percentage_change() {
+        let cli = Cli::try_parse_from(["calculator", "percentage", "2.0", "4.0"]).unwrap();
+        match cli.command {
+            Commands::Percentage { a, b } => {
+                assert_eq!(((b - a) / a) * 100.0, 100.0);
+            }
+            _ => panic!("Expected percentage command"),
+        }
+    }
+
+    #[test]
+    fn test_percentage_change_with_divide_by_zero() {
+        let cli = Cli::try_parse_from(["calculator", "percentage", "0.0", "4.0"]).unwrap();
+        match cli.command {
+            Commands::Percentage { a, b: _ } => {
+                assert!(a == 0.0);
+            }
+            _ => panic!("Expected percentage command"),
         }
     }
 }
