@@ -1,4 +1,4 @@
-# Rust Calculator Demo Starter
+# Rust Calculator Demo
 
 ![Rust Logo](https://github.com/d3vkk/rust-calculator-demo/blob/master/rust-logo.png)
 
